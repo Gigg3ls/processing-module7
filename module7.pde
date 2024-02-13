@@ -4,16 +4,23 @@ final color BLUE = #00439D;
 final color WHITE = #ffffff;
 final color BLACK = #000000;
 
-float grafXLeft = 25;
-float grafYLeft = 25;
-float grafXRight, grafYRight;
+float grafX = 25;
+float grafY = 25;
+float grafWidth, grafHeight;
 float dotSize = 10;
+int startYear = 1995;
+float yearY;
 int[] numbersOfGraduated;
+int[] dateYear;
 
 void setup() {
   size(500, 300);  
   smooth();    
-  numbersOfGraduated = loadInts("numbers of students graduated.txt");    
+  numbersOfGraduated = loadInts("numbers of students graduated.txt");
+  dateYear = new int[numbersOfGraduated.length];
+  for (int i = 0; i < numbersOfGraduated.length; i++) {
+    dateYear[i] = startYear + i;
+  }    
 }
 
 void draw() {
@@ -23,23 +30,22 @@ void draw() {
 }
 
 void drawGraf() {
-  grafXRight = width - grafXLeft;
-  grafYRight = height - 2 * grafYLeft;
-  
+  grafWidth = width - grafX;
+  grafHeight = height - 2 * grafY;
+  yearY = grafY + grafHeight;
   fill(GRAY);
   stroke(BLACK);
   rectMode(CORNERS);
-  rect(grafXLeft, grafYLeft, grafXRight, grafYRight);
+  rect(grafX, grafY, grafWidth, grafHeight);
 }
 
 void drawDots() {
-  float dotOffSet = (grafXRight - grafXLeft) / (numbersOfGraduated.length - 1);
+  float dotOffSet = (grafWidth - grafX) / (numbersOfGraduated.length - 1);
   
   for(int i = 0; i < numbersOfGraduated.length; i++){    
-    float dotX = grafXLeft + i * dotOffSet;
+    float dotX = grafX + i * dotOffSet;
     float dotY = map(numbersOfGraduated[i], min(numbersOfGraduated),
-                     max(numbersOfGraduated), grafYRight, grafYLeft);  
-                     
+                     max(numbersOfGraduated), grafHeight, grafY);                 
     if (dist(dotX, dotY, mouseX, mouseY) < dotSize / 2) {          
       fill(BLACK);
       stroke(BLACK);
@@ -50,6 +56,7 @@ void drawDots() {
        stroke(BLUE);
     }       
     ellipse(dotX, dotY, dotSize, dotSize);
+    drawDateYear(dotX, dateYear[i]);
   }  
 }
 
@@ -57,14 +64,20 @@ void drawText(float dotX, float dotY, int value) {
    int textRectWidth = 25;
    int textRectHeight = 25;
    int textRectOffSet = 20;
-   int textXOffSet =  8;
    int textYOffSet = 15;
    
    rectMode(CENTER);
    rect(dotX, dotY - textRectOffSet, textRectWidth, textRectHeight);
    fill(WHITE);
    stroke(WHITE);
-   text(value, dotX - textXOffSet, dotY - textYOffSet);
+   text(value, dotX , dotY - textYOffSet);
    fill(BLACK);
    stroke(BLACK);  
+}
+
+void drawDateYear(float dotX, int year) {
+  fill(BLACK);
+  stroke(BLACK);
+  textAlign(CENTER);
+  text(year, dotX, yearY);
 }
